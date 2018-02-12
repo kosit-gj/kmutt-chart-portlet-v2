@@ -327,6 +327,7 @@ $( document ).ajaxStop(function() {
 		var controlMessage = "${connectionForm.message}";
 		if(controlMessage.length>1){
 			alert(controlMessage);
+			window.location.href = "../";
 		}
 		
 		

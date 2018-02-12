@@ -346,6 +346,7 @@ var checkValidateFormFn = function(actionName){
 	}
 	//page function
 	function formSubmit(actionName){
+
 		/*
 		var id = $("web_${ns} select#datasourceId").val();
 		var text = $("web_${ns} select#datasourceId").find('option:selected').text();
@@ -384,7 +385,7 @@ var checkValidateFormFn = function(actionName){
 				}
 			}
 		}else if(actionName=="update"){
-			console.log("["+checkValidateFormFn(actionName)+"]");
+			
 			
 			if(checkValidateFormFn(actionName).trim()!=""){
 				alert(checkValidateFormFn(actionName));
@@ -690,6 +691,7 @@ var checkValidateFormFn = function(actionName){
 		var controlMessage = "${chartDatasourceForm.message}";
 		if(controlMessage.length>1){
 			alert(controlMessage);
+			window.location.href = "../";
 			//window.location="./chart-datasource";
 		}
 		

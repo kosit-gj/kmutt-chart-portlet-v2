@@ -336,6 +336,7 @@ var checkValidateFormFn = function(){
 					$(this).prop("selected",true);
 				});
 				$("#web_${ns} form#filterF").submit();
+				
 			}else{
 				//alert(errorMessage);
 				$("#web_${ns} #sqlMessage").html(errorMessage);
@@ -529,11 +530,12 @@ var checkValidateFormFn = function(){
 		$( document ).ajaxStop(function() {
 			$("body").mLoading('hide');
 		});
-		
+
 		
 		var controlMessage = "${filterForm.message}";
 		if(controlMessage.length>1){
 			alert(controlMessage);
+			window.location.href = "../";
 		}
 		listDataTableFn();
 		
