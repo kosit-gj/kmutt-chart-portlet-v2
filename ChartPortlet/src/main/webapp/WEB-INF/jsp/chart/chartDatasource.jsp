@@ -494,7 +494,7 @@ var checkValidateFormFn = function(actionName){
 			opt.html(obj["fusedlist"][i]["fname"]);
 			$("#web_${ns} select#filterUsedList").append(opt);
 			//disable
-			var target = $("#web_${ns} select#filterInitList").find("option[value="+value+"]");
+			var target = $("#web_${ns} select#filterInitList").find("option[value='"+value+"']");
 			target.prop("selected",false);
 			target.hide();
 		}
@@ -513,7 +513,7 @@ var checkValidateFormFn = function(actionName){
 			opt.html(obj["cusedlist"][i]["cname"]);
 			$("#web_${ns} select#chartUsedList").append(opt);
 			//disable
-			var target = $("#web_${ns} select#chartInitList").find("option[value="+value+"]");
+			var target = $("#web_${ns} select#chartInitList").find("option[value='"+value+"']");
 			target.prop("selected",false);
 			target.hide();
 		}
@@ -532,7 +532,7 @@ var checkValidateFormFn = function(actionName){
 			opt.html(obj["userUsedlist"][i]["uname"]);
 			$("#web_${ns} select#userUsedList").append(opt);
 			//disable
-			var target = $("#web_${ns} select#userInitList").find("option[value="+value+"]");
+			var target = $("#web_${ns} select#userInitList").find("option[value='"+value+"']");
 			target.prop("selected",false);
 			target.hide();
 		}
