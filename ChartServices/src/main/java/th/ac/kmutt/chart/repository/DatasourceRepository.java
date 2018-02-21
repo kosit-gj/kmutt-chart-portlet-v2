@@ -49,12 +49,42 @@ public class DatasourceRepository {
     
     public EntityManager connectDS(Integer dsid) throws Exception{
    	try{
+   		   /* 
     		if(!SystemSetting.existConnects()){
     			logger.info("load connection. . .");	
     			System.out.println("load connection. . .");
     			loadEm();
     		}
     		EntityManager em = SystemSetting.getConnects(dsid.toString());
+    		 */
+    		/* */
+   		EntityManager em = SystemSetting.getConnects(dsid.toString());
+   		logger.info("EntityManager ["+em+"]");	
+   		   if(em==null){
+    			logger.info("load connection. . .");	
+    			System.out.println("load connection. . .");
+    			loadEm();
+    			em = SystemSetting.getConnects(dsid.toString());
+    		}
+   		   // validate query 
+   		   if(dsid==2){
+   		   //if(false){
+   			logger.info(" into validate Query connection. . .");
+   			Query query = em.createNativeQuery("SELECT 1 FROM sysibm.sysdummy1 ");
+   				try{
+   					query.getResultList();
+   				}catch(Exception e){
+   					logger.info(" Connection Lost ");	
+   					loadEm();
+   					em = SystemSetting.getConnects(dsid.toString());
+   				}
+   		   }
+   		   logger.info(" Connection isOpen? ["+em.isOpen()+"]");	
+   		    if(!em.isOpen()){
+    			loadEm();
+    			em = SystemSetting.getConnects(dsid.toString());
+    		}
+    		/* */
     		return em;
     	}catch(Exception e){
     		logger.error(" Exception datasourceRepo.connectDS  not found dsConfig at id [" +dsid+ "] reason="+e.getCause());
@@ -93,6 +123,13 @@ public class DatasourceRepository {
     	properties.put("hibernate.connection.password", dsConfig.getPassword());
     	properties.put("hibernate.dialect", dsConfig.getDialect());
     	properties.put("hibernate.show-sql", "true");
+    	properties.put("hibernate.connection.autocommit","true");
+    	properties.put("hibernate.c3p0.max_size","30");
+    	properties.put("hibernate.c3p0.min_size","1");
+    	properties.put("hibernate.c3p0.acquire_increment","1");
+    	properties.put("hibernate.c3p0.idle_test_period","0");
+    	properties.put("hibernate.c3p0.max_statements","0");
+    	properties.put("hibernate.c3p0.timeout","60");
     	
     	EntityManagerFactory emf = Persistence.createEntityManagerFactory("HibernatePersistenceUnitDwh",properties);
     	EntityManager em = emf.createEntityManager();
@@ -205,7 +242,8 @@ public class DatasourceRepository {
 			//return null;
 	  }catch(Exception ex){
 		  System.out.println(" break "+fe.getFilterId());
-			logger.error(" Break filterValue cascade : Exception  at filter id="+fe.getFilterId()+ "  reason="+ex);
+		  logger.error(" filter query error ="+fe.getSqlQuery());
+		  logger.error(" Break filterValue cascade : Exception  at filter id="+fe.getFilterId()+ ",connection id=["+fe.getConnId()+"] reason="+ex);
 			//return  new ArrayList<FilterValueM>();
 			ex.printStackTrace();
 			return null;
