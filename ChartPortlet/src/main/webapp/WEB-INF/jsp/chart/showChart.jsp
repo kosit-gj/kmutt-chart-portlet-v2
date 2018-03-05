@@ -79,8 +79,9 @@
 		src="<c:url value="/resources/images/comment.jpg"/>"
 		style="cursor: pointer; width: 16px; height: 16px; padding-left: 5px" />
 	</a>
+	<%--
 	${chartSettingForm.chartInstance}
-	<%-- 
+	 
 	,${chartSettingForm.chartType}
 	--%> 
 	<c:if test="${not empty chartSettingForm.linkTo}">
