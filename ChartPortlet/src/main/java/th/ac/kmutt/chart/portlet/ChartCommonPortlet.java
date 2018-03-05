@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.User;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -37,7 +38,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.chainsaw.Main;
@@ -96,7 +99,9 @@ public class ChartCommonPortlet {
 		try {
 			currentUser = PortalUtil.getUser(request);
 		} catch (PortalException e) {
+			e.printStackTrace();
 		} catch (SystemException e) {
+			e.printStackTrace();
 		}
 		userId = currentUser.getScreenName();
 
@@ -111,6 +116,7 @@ public class ChartCommonPortlet {
 			// get chartInstance prop
 			chartInstanceM = chartService.findChartInstanceById(instanceId);
 		} catch (Exception e) {
+			e.printStackTrace();
 			// handle new chartInstance error
 		}
 		String chartType = "";
@@ -135,6 +141,7 @@ public class ChartCommonPortlet {
 //		logger.info("=="+instanceId+"==> Finish chartInstanceM Setting.");
 
 //		logger.info("=="+instanceId+"==> Start Chart Setting.");
+		logger.info("into chartSettingForm["+model.containsAttribute("chartSettingForm")+"]");
 		// chart Setting
 		ChartSettingForm chartSettingForm = null;
 		if (!model.containsAttribute("chartSettingForm")) {
@@ -158,6 +165,7 @@ public class ChartCommonPortlet {
 				chartSettingForm.setComment(commentM.getComment());
 		} catch (Exception e) {
 			// handle commecnt exption
+			e.printStackTrace();
 		}
 //		logger.info("=="+instanceId+"==> Start Chart Setting.");
 		
@@ -185,8 +193,8 @@ public class ChartCommonPortlet {
 			
 			// retrive auto filter
 			FilterM paramServicefilter = new FilterM();
-			String userIdno = (String) request.getPortletSession().getAttribute("userId",
-					PortletSession.APPLICATION_SCOPE);
+			//String userIdno = (String) request.getPortletSession().getAttribute("userId",
+			//		PortletSession.APPLICATION_SCOPE);
 			if(chartInstanceM.getServiceId()!=null){
 				paramServicefilter.setUserid(userId);
 				paramServicefilter.setServiceId(Integer.valueOf(chartInstanceM.getServiceId()));
@@ -259,6 +267,7 @@ public class ChartCommonPortlet {
 				logger.info("WARNING! Exception Instance title generator : [" + chartInstanceM.getInstanceId()
 						+ "] \r\n reason => " + ex.getMessage());
 				ChartJsonString = fusionChart.getChartJson();
+				ex.printStackTrace();
 			}
 //			logger.info("=="+instanceId+"==> Finish Chart & Title setting.");
 			// set chart object
@@ -309,7 +318,8 @@ public class ChartCommonPortlet {
 
 	// @javax.portlet.ProcessEvent(qname = "{http://liferay.com}paramOverride")
 	@RequestMapping("VIEW")
-	@EventMapping(value = "{http://liferay.com/events}paramOverride")
+	//@EventMapping(value = "{http://liferay.com/events}paramOverride")
+	 @ProcessEvent(qname =  "{http://liferay.com/events}paramOverride")
 	public void receiveEvent(EventRequest request, EventResponse response, ModelMap map) {
 		Event event = request.getEvent();
 		FilterInstanceM globalFilter = (FilterInstanceM) event.getValue();
@@ -386,6 +396,107 @@ public class ChartCommonPortlet {
 		return globalFilter;
 	}
 
+	// externalGlobalFilter ajax
+	 	@ResourceMapping(value = "externalGlobalFilter")
+	 	@ResponseBody
+	 	public void externalGlobalFilter(ResourceRequest request, ResourceResponse response) throws IOException {
+
+	 		com.liferay.portal.kernel.json.JSONObject json = JSONFactoryUtil.createJSONObject();
+	 		com.liferay.portal.kernel.json.JSONObject header = JSONFactoryUtil.createJSONObject();
+	 		com.liferay.portal.kernel.json.JSONArray content = JSONFactoryUtil.createJSONArray();
+	 		String[] factors = ParamUtil.getParameterValues(request, "factor[]");
+	 		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+	 		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);
+	 		Map map = normalRequest.getParameterMap();
+	 		Iterator entries = map.entrySet().iterator();
+	 		while (entries.hasNext()) {
+	 		    Map.Entry entry = (Map.Entry) entries.next();
+	 		    String key = (String)entry.getKey();
+	 		   Object value = entry.getValue();
+	 		   logger.info("Key = " + key + ", Value = " + value);
+	 		}
+	 		String instanceId = normalRequest.getParameter("instanceId");
+	 		String userId = normalRequest.getParameter("userId");
+	 		String serviceId = normalRequest.getParameter("serviceId");
+	 		String chartType = normalRequest.getParameter("chartType");
+	 		String chartTitle = normalRequest.getParameter("chartTitle");
+	 		String chartSubTitle = normalRequest.getParameter("chartSubTitle");
+	 		String titleFromFilter = normalRequest.getParameter("titleFromFilter");
+	 		String subFromFilter = normalRequest.getParameter("subFromFilter");
+	    	String[] factorString = normalRequest.getParameterValues("factor[]");
+	 		logger.info("factorString");
+	 		logger.info(factorString.length);
+	 		if(factorString!=null && factorString.length>0)
+	 			logger.info(factorString[0]);
+	 		List<FilterM> allFilter = new ArrayList<FilterM>();
+	 	     FilterM paramServicefilter = new FilterM();
+	 	     
+	 		if(serviceId!=null){
+	 					paramServicefilter.setUserid(userId);
+	 					paramServicefilter.setServiceId(Integer.valueOf(serviceId));
+	 		}
+	 				
+	 			
+	 		logger.info("=="+instanceId+"==> ---> Call chartService.getFilterService(paramServicefilter)");
+	 				//List<FilterM> serviceFilters = chartService.getFilterService(paramServicefilter);
+	 		List<FilterM> serviceFilters = chartService.getFilterService(paramServicefilter, instanceId);
+	 				
+	 		allFilter.addAll(serviceFilters);
+			//mergeFiltersValue(allFilter, globalFilter);
+			//mergeFiltersValue(allFilter, internalFilter);
+
+			FusionChartM fusionChart = new FusionChartM();
+			fusionChart.setInstanceId(instanceId);
+			fusionChart.setFilters(allFilter); //
+			fusionChart.setUserid(userId);
+			fusionChart = chartService.getFusionChart(fusionChart);
+			logger.info("=="+instanceId+"==> Finish Chart Building.");
+			
+			
+//			logger.info("=="+instanceId+"==> Start Chart & Title setting.");
+			// setting chart & title
+			String ChartJsonString = "";
+			try {
+				//if (chartInstanceM != null) {
+					if (!chartType.equalsIgnoreCase("table")) {
+						JSONObject ChartJson = new JSONObject(fusionChart.getChartJson());
+						JSONObject chart = (JSONObject) ChartJson.get("chart");
+						if (chartTitle != null
+								&& !chartTitle.trim().equals("")) {
+							String newTitle = generateChartTitle(chartTitle,
+									fusionChart.getFilters(), titleFromFilter);
+							chart.put("caption", newTitle);
+						}
+						if (chartSubTitle != null
+								&& !chartSubTitle.trim().equals("")) {
+							String newSub = generateChartSubTitle(chartSubTitle,
+									fusionChart.getFilters(), subFromFilter);
+							chart.put("subCaption", newSub);
+						}
+						ChartJsonString = ChartJson.toString();
+					} else if (chartType.equalsIgnoreCase("table")) {
+						logger.info("table size filter:" + fusionChart.getFilters().size());
+						ChartJsonString = replaceParamString(fusionChart.getChartJson(), fusionChart.getFilters());
+					}
+				//}
+			} catch (Exception ex) {
+				logger.info("WARNING! Exception Instance title generator : [" + instanceId
+						+ "] \r\n reason => " + ex.getMessage());
+				ChartJsonString = fusionChart.getChartJson();
+				ex.printStackTrace();
+			}
+//			logger.info("=="+instanceId+"==> Finish Chart & Title setting.");
+			// set chart object
+			//chartSettingForm.setJsonStr(ChartJsonString);
+			content.put(ChartJsonString);
+	 		header.put("success", "1");
+	 		//content="xxx";
+	 		json.put("header", header);
+	 		json.put("content", content);
+	 		response.getWriter().write(json.toString());
+
+	 	}
+	 	
 	// cascade ajax
 	@ResourceMapping(value = "cascadeInternalFilter")
 	@ResponseBody

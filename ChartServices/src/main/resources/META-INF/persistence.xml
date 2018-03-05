@@ -14,12 +14,12 @@
 	        <property name="hibernate.c3p0.timeout" value="60" />
 	        <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
          	<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-         	<!--  --> 
+         	<!--  
 	        <property name="hibernate.connection.url" value="jdbc:mysql://10.1.130.242:3306/CHART_DB?autoReconnect=true&amp;useSSL=false"/>
-	        
-	        <!--  
-	        <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/CHART_DB?autoReconnect=true&amp;useSSL=false"/>
 	        -->
+	        <!-- -->   
+	        <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/CHART_DB?autoReconnect=true&amp;useSSL=false"/>
+	        
 	        <property name="hibernate.connection.username" value="root"/>
 	        <property name="hibernate.connection.password" value="015482543"/>
 	        <property name="hibernate.connection.autocommit" value="true"/>
@@ -38,12 +38,12 @@
 	        <property name="hibernate.c3p0.timeout" value="60" />
 	        <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
          	<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-         	<!-- -->
+         	<!-- 
 	        <property name="hibernate.connection.url" value="jdbc:mysql://10.1.130.242:3306/lportal_dev_v3?autoReconnect=true&amp;useSSL=false"/>
-	        
-	        <!--  
-	        <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/lportal?autoReconnect=true&amp;useSSL=false"/>
 	        -->
+	        <!-- -->  
+	        <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/lportal?autoReconnect=true&amp;useSSL=false"/>
+	        
 	        <property name="hibernate.connection.username" value="root"/>
 	        <property name="hibernate.connection.password" value="015482543"/>
 	        <property name="hibernate.connection.autocommit" value="true"/>

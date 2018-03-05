@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import th.ac.kmutt.chart.constant.ServiceConstant;
-import th.ac.kmutt.chart.domain.ChartFeatureInstanceEntity;
+//import th.ac.kmutt.chart.domain.ChartFeatureInstanceEntity;
 import th.ac.kmutt.chart.domain.FilterEntity;
 import th.ac.kmutt.chart.domain.ServiceFilterMappingEntity;
 import th.ac.kmutt.chart.model.*;
@@ -183,7 +183,11 @@ public class FilterResource extends BaseResource {
 							// try{
 							logger.info(":: Msg ===>> getInstanceId = "+xsource.getInstanceId());
 							//filters = chartService.getFilterOfService(xsource.getServiceId(), xsource.getUserid());
-							filters = chartService.getFilterOfService(xsource.getServiceId(), xsource.getUserid(), xsource.getInstanceId());
+							try{
+								filters = chartService.getFilterOfService(xsource.getServiceId(), xsource.getUserid(), xsource.getInstanceId());
+							}catch(Exception e){
+								e.printStackTrace();
+							}
 							// }catch(Exception e){
 							// filters = new ArrayList<FilterM>();
 							// System.out.println(" Exception FilterResource sname FILTER_GET_FILTER_SERVICE

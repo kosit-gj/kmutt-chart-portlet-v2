@@ -19,7 +19,7 @@
 									   bean="chartResource" />
 					</bean>
 				</entry>
-
+				<!--  
 				<entry key="/chartfeature">
 					<bean class="org.restlet.ext.spring.SpringFinder">
 						<lookup-method name="create"
@@ -40,7 +40,7 @@
 									   bean="chartfeaturemappingResource" />
 					</bean>
 				</entry>
-
+				-->
 				<entry key="/chartfilterinstance">
 					<bean class="org.restlet.ext.spring.SpringFinder">
 						<lookup-method name="create"
@@ -62,14 +62,14 @@
 					</bean>
 				</entry>
 
-
+				<!--  
 				<entry key="/feature">
 					<bean class="org.restlet.ext.spring.SpringFinder">
 						<lookup-method name="create"
 									   bean="featureResource" />
 					</bean>
 				</entry>
-
+				-->
 				<entry key="/filter">
 					<bean class="org.restlet.ext.spring.SpringFinder">
 						<lookup-method name="create"

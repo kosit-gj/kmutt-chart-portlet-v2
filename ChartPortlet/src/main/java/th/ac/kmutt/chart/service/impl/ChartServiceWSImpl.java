@@ -121,6 +121,7 @@ public class ChartServiceWSImpl extends PostCommon implements ChartService {
     }
 
     // chart feature
+    /*
     @Override
     public Integer saveChartFeature(ChartFeatureM model) {
         model.setServiceName(ServiceConstant.CHART_FEATURE_SAVE);
@@ -249,7 +250,7 @@ public class ChartServiceWSImpl extends PostCommon implements ChartService {
         else
             return null;
     }
-
+    */
     // Chart Filter Instance
     @Override
     public Integer saveChartFilterInstance(ChartFilterInstanceM model) {
@@ -389,6 +390,7 @@ public class ChartServiceWSImpl extends PostCommon implements ChartService {
     }
 
     // Feature
+    /* 
     @Override
     public Integer saveFeature(FeatureM model) {
         model.setServiceName(ServiceConstant.FEATURE_SAVE);
@@ -430,7 +432,7 @@ public class ChartServiceWSImpl extends PostCommon implements ChartService {
         else
             return null;
     }
-
+    */
     // Filter
     @Override
     public Integer saveFilter(FilterM model) {

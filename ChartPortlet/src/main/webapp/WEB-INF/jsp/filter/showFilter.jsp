@@ -10,7 +10,8 @@
 --%>
 <html>
 
-<portlet:resourceURL var="cascadeGlobalFilter" id="cascadeGlobalFilter"></portlet:resourceURL>  
+<portlet:resourceURL var="cascadeGlobalFilter" id="cascadeGlobalFilter"></portlet:resourceURL>
+ 
 <portlet:actionURL var="formAction">
     <portlet:param name="action" value="doSubmit"/>
 </portlet:actionURL>
@@ -29,12 +30,38 @@
     
 	<script>
 		 $(document).ready(function () {
-			 /*
+			
+			 /* */
 			 $("#${ns}comment_bt").popover({
 		            html:true
 		      });
-			 */
+			 /* */
 		 });
+		function testFire(){
+			var factor = [];
+			var limitor = ":#:";
+			var seperate = ":&:";
+			$("#globalFilterForm .global_filter").each(function(){
+				if($(this).prop("multiple")){
+					 var select = this;
+					 var selected = [];
+					 for (var i = 0; i < select.length; i++) {
+					        if (select.options[i].selected) selected.push(select.options[i].value);
+					 }
+					 factor.push(unpackModelAttr(this.id)[0]+seperate+unpackModelAttr(this.id)[1]+seperate+selected.join(","));
+				}else{
+					//alert(this.value);
+					if(this.value.trim()==""){
+						factor.push(unpackModelAttr(this.id)[0]+seperate+unpackModelAttr(this.id)[1]+seperate+"ALL");
+					}else{
+						factor.push(unpackModelAttr(this.id)[0]+seperate+unpackModelAttr(this.id)[1]+seperate+this.value);
+					}
+					
+				}
+			});
+			console.log(factor)
+			Liferay.fire('getUserData', {userData:factor});
+		}
 		function regenerateItem(connId,id,val,items){
 			var g_fiter_prefix = "g_filter_";
 			var cnt = $("#"+g_fiter_prefix+connId+"_"+id);  
@@ -159,17 +186,22 @@
         </c:forEach>
     </c:if>
 	<div style="display:inline-block">
+	   <!-- -->  
 	   	<button type="submit"class="btn btn-primary" style="margin-bottom:4px;">Submit</button>
+	   	<!--
+	   	<button type="button"class="btn btn-primary" style="margin-bottom:4px;" onClick="testFire()">Submit</button>
+	   	-->
+	   	
     </div>
-    <!-- 
+    <!-- -->
     <div style="display:inline-block;padding:6px 1px 1px 5px;float:right;">
     	<a tabindex="0" id="${ns}comment_bt"
             data-toggle="popover" data-trigger="focus" title="Comment"
-           data-content="${globalFilterForm.comment}">
+           data-content="${globalFilterForm.comment}" data-placement="left">
             <img id="${ns}linktox" src="<c:url value="/resources/images/comment.jpg"/>" style="cursor:pointer;width:16px;height: 16px;padding-left:5px" />
         </a>
     </div>
-     -->
+     <!-- -->
 </form:form>
 <script>
 $('#globalFilterForm input[type="text"]').keypress(function(e){

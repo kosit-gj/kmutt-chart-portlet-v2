@@ -33,6 +33,7 @@ public interface ChartService {
 	public List listChart(ChartM param);
 	
 	//CHART_FEATURE
+	/*
 	public Integer saveChartFeature(ChartFeatureM model) ;
 	public Integer updateChartFeature(ChartFeatureM model) ;
 	public Integer deleteChartFeature(ChartFeatureM model) ;
@@ -49,7 +50,7 @@ public interface ChartService {
 	public Integer updateChartFeatureMapping(ChartFeatureMappingM model) ;
 	public Integer deleteChartFeatureMapping(ChartFeatureMappingM model) ;
 	public ChartFeatureMappingM findChartFeatureMappingById(Integer featureId, Integer chartId) ;
-
+    */
 	//CHART_FEATURE_MAPPIG
 	public Integer saveChartFilterInstance(ChartFilterInstanceM model) ;
 	public Integer updateChartFilterInstance(ChartFilterInstanceM model) ;
@@ -70,11 +71,12 @@ public interface ChartService {
 	public CommentM findCommentById(String instanceId) ;
 
 	//FEATURE
+	/*
 	public Integer saveFeature(FeatureM model) ;
 	public Integer updateFeature(FeatureM model) ;
 	public Integer deleteFeature(FeatureM model) ;
 	public FeatureM findFeatureById(Integer featureId) ;
-
+	*/
 	//FILTER
 	public Integer saveFilter(FilterM model) ;
 	public Integer updateFilter(FilterM model) ;

@@ -13,6 +13,7 @@
 </c:set>
 <portlet:resourceURL var="cascadeInternalFilter"
 	id="cascadeInternalFilter"></portlet:resourceURL>
+	<portlet:resourceURL var="externalGlobalFilter" id="externalGlobalFilter"></portlet:resourceURL>   
 <portlet:resourceURL var="buildChartAjax" id="buildChartAjax"></portlet:resourceURL>
 
 <!DOCTYPE html>
@@ -78,7 +79,10 @@
 		src="<c:url value="/resources/images/comment.jpg"/>"
 		style="cursor: pointer; width: 16px; height: 16px; padding-left: 5px" />
 	</a>
-
+	${chartSettingForm.chartInstance}
+	<%-- 
+	,${chartSettingForm.chartType}
+	--%> 
 	<c:if test="${not empty chartSettingForm.linkTo}">
 		<%--  onclick="${ns}linkto('${chartSettingForm.linkTo}')"
         onclick="window.open('${chartSettingForm.linkTo}');" target="_blank"
@@ -188,7 +192,7 @@
     function ${ns}linkto(link_url){
         window.open(link_url,"_blank");
     }
-    
+    var ${ns}_revenueChart;
     $(document).ready(function () {
         $("#${ns}comment_bt").popover({
             html:true
@@ -202,7 +206,8 @@
         if(chartype=="gantt"){ chartHeight="600"; }
         else if(chartype=="hbullet"){ chartHeight="150"; }
         <c:if test="${not empty chartSettingForm.jsonStr && chartSettingForm.chartType!='table'}">
-        var revenueChart = new FusionCharts({
+        //var revenueChart = new FusionCharts({
+        ${ns}_revenueChart =new FusionCharts({
             "type": "${chartSettingForm.chartType}",
             "renderAt": "${ns}chartContainer",
             "width": "100%", // 500
@@ -210,14 +215,18 @@
             "dataFormat": "json",
             "dataSource":${chartSettingForm.jsonStr}
         });
-        revenueChart.render();
+        
+        //revenueChart.render();
+        ${ns}_revenueChart.render();
         </c:if>        
+        <%-- 
         <c:if test="${chartSettingForm.chartType=='table' }">
 			   	var jsonStrObj=${chartSettingForm.jsonStr};
 				var table1 = new wtpTable("#${ns}chartContainer",jsonStrObj);
 				table1.updatePath("/ChartPortlet");
 				table1.render();
         </c:if>
+        --%>
         /* Check */
         <c:if test="${empty chartSettingForm.jsonStr} ">
         	$("#${ns}chartContainer").append("การแสดงผลผิดพลาด");
@@ -229,6 +238,12 @@
 			$("#${ns}chartContainer").html("Wait for Filter Submit");
 		</c:if>
 	 	<c:if test="${chartSettingForm.issubmit=='1' }"> 
+	 		<c:if test="${chartSettingForm.chartType == 'table' }">
+	   			var jsonStrObj=${chartSettingForm.jsonStr};
+				var table1 = new wtpTable("#${ns}chartContainer",jsonStrObj);
+				table1.updatePath("/ChartPortlet");
+				table1.render();
+			</c:if>
     		F${ns}_submitAjax();
     	</c:if>
     });
@@ -380,6 +395,89 @@
 		json.chart.subCaption = subTitle;
 		return JSON.stringify(json);
 	}
+</script>
+<script>
+Liferay.on(
+	'getUserData',function(event) {
+		alert("event"+event)
+		console.log(event.userData)
+		$.ajax({
+   	 		dataType: "json",
+   	 		url:"<%=externalGlobalFilter%>",
+   	 		data: { factor: event.userData },
+   	 		success:function(data){
+   	 		   console.log(data)	
+   	 		},complete:function(data){
+	   	 		
+   	 		}
+   	 	}); // end ajax
+		/* */
+		var data= {
+			    "chart": {
+			        "caption": "Top 5 Stores by Sales",
+			        "subCaption": "Last month",
+			        "yAxisName": "Sales (In USD)",
+			        "numberPrefix": "$",
+			        "paletteColors": "#0075c2",
+			        "bgColor": "#ffffff",
+			        "showBorder": "0",
+			        "showCanvasBorder": "0",
+			        "usePlotGradientColor": "0",
+			        "plotBorderAlpha": "10",
+			        "placeValuesInside": "1",
+			        "valueFontColor": "#ffffff",
+			        "showAxisLines": "1",
+			        "axisLineAlpha": "25",
+			        "divLineAlpha": "10",
+			        "alignCaptionWithCanvas": "0",
+			        "showAlternateVGridColor": "0",
+			        "captionFontSize": "14",
+			        "subcaptionFontSize": "14",
+			        "subcaptionFontBold": "0",
+			        "toolTipColor": "#ffffff",
+			        "toolTipBorderThickness": "0",
+			        "toolTipBgColor": "#000000",
+			        "toolTipBgAlpha": "80",
+			        "toolTipBorderRadius": "2",
+			        "toolTipPadding": "5"
+			    },
+			    "data": [
+			        {
+			            "label": "Bakersfield Central",
+			            "value": "880000"
+			        },
+			        {
+			            "label": "Garden Groove harbour",
+			            "value": "730000"
+			        },
+			        {
+			            "label": "Los Angeles Topanga",
+			            "value": "590000"
+			        },
+			        {
+			            "label": "Compton-Rancho Dom",
+			            "value": "520000"
+			        },
+			        {
+			            "label": "Daly City Serramonte",
+			            "value": "330000"
+			        }
+			    ]
+			}
+		var revenueChart = new FusionCharts({
+            "type": '${chartSettingForm.chartType}',
+            "renderAt": "${ns}chartContainer",
+            "width": "100%", // 500
+            "height": "${chartSettingForm.chartHeight}", // chartHeight,
+            "dataFormat": "json",
+            "dataSource": data//JSON.parse(chartJsonObj)
+        });
+        revenueChart.render();
+        /* */
+		//console.log(${ns}_revenueChart)
+        //${ns}_revenueChart.render();
+	}
+);
 </script>
 </body>
 </html>

@@ -19,6 +19,7 @@ public class DatasourceConnectionEntity {
     private String password;
     private String dialect;
     private String driverClass;
+    private String connType;
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "CONN_ID")
@@ -78,6 +79,14 @@ public class DatasourceConnectionEntity {
 	}
 	public void setDriverClass(String driverClass) {
 		this.driverClass = driverClass;
+	}
+	 @Basic
+	 @Column(name = "CONN_TYPE")
+	public String getConnType() {
+		return connType;
+	}
+	public void setConnType(String connType) {
+		this.connType = connType;
 	}
    
 }

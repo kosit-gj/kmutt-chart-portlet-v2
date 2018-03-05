@@ -1,10 +1,16 @@
 package th.ac.kmutt.chart.portlet;
 
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.model.User;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceContextFactory;
+import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 
@@ -72,6 +78,7 @@ public class GlobalFilterController {
 
     @RequestMapping("VIEW") 
     public String showFilter(PortletRequest request, Model model) {
+    	
     	ThemeDisplay themeDisplay = (ThemeDisplay) request
                 .getAttribute(WebKeys.THEME_DISPLAY);
         String instanceId=themeDisplay.getPortletDisplay().getInstanceId();
@@ -80,7 +87,9 @@ public class GlobalFilterController {
         GlobalFilterForm filterForm = null;
         if (model.containsAttribute("globalFilterForm")) {
         	filterForm = (GlobalFilterForm) model.asMap().get("globalFilterForm");
+        	logger.info("filterForm.getMode()"+filterForm.getMode());
         	if(filterForm.getMode()!=null ){
+        		logger.info("filterForm.getMode()2"+filterForm.getMode());
         		if(filterForm.getMode().equalsIgnoreCase("NEW")){ // from setting mode
 	        	
 	            	filterForm = new GlobalFilterForm();
@@ -91,7 +100,15 @@ public class GlobalFilterController {
 	            		filterForm.setFilterList(fins.get(0).getFilterList());
 	            	}
         		}
-        	}// handle 
+        	}else{
+        		// handle 
+        		FilterInstanceM fim = new FilterInstanceM();
+            	fim.setInstanceId(instanceId);
+            	List<FilterInstanceM>  fins = chartService.getFilterInstanceWithItem(fim);
+            	if(fins!=null && fins.get(0)!=null & fins.get(0).getFilterList()!=null){
+            		filterForm.setFilterList(fins.get(0).getFilterList());
+            	}
+        	}
         } else {
             filterForm = new GlobalFilterForm();
         	FilterInstanceM fim = new FilterInstanceM();
@@ -101,7 +118,7 @@ public class GlobalFilterController {
         		filterForm.setFilterList(fins.get(0).getFilterList());
         	}
         }
-        //
+        logger.info("filterForm.getFilterList()"+filterForm.getFilterList());
         CommentM commentM = chartService.findCommentById(instanceId);
         if(commentM!=null)
         filterForm.setComment(commentM.getComment());
@@ -187,6 +204,8 @@ public class GlobalFilterController {
        	QName qname = new QName("http://liferay.com/events","paramOverride","x");
        	response.setEvent(qname, globalFilterIns); 
        	model.addAttribute("globalFilter",globalFilterIns);
+       	filterForm.setMode("SUBMIT");
+       	model.addAttribute("globalFilterForm",filterForm);
         //re show 
        //model.addAttribute("FilterMList", gFilters);
     }
@@ -253,6 +272,7 @@ public class GlobalFilterController {
 	        portletSession.setAttribute("globalFilterForm" ,form,PortletSession.PORTLET_SCOPE);
 		}
     }
+    
     private List<FilterM> decriptCascadeString(String cascadeString,String causeFilterId){
     	 List<FilterM> filters = new ArrayList<FilterM>();
     	 // example string =  "filterId::filterValue||filterId::filterValue"

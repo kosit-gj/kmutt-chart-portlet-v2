@@ -243,6 +243,7 @@ wtpTable.prototype.createTable = function(){
 	     }
 	     //footer
 		 var tfooter =	$(this.container+">table>tbody");
+		 if(jsonStrObj!=null && jsonStrObj.footer!=null)
 	     if(jsonStrObj.footer.length>0){
 	    	 var footer = jsonStrObj.footer;
 	    	 var trNew = tfooter.children("tr:last-child").clone();

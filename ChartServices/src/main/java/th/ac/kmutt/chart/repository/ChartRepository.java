@@ -24,15 +24,17 @@ import com.google.gson.Gson;
 import th.ac.kmutt.chart.constant.DefaultConstant;
 import th.ac.kmutt.chart.constant.ServiceConstant;
 import th.ac.kmutt.chart.domain.ChartEntity;
+/*
 import th.ac.kmutt.chart.domain.ChartFeatureEntity;
 import th.ac.kmutt.chart.domain.ChartFeatureInstanceEntity;
 import th.ac.kmutt.chart.domain.ChartFeatureMappingEntity;
 import th.ac.kmutt.chart.domain.ChartFeatureMappingEntityPK;
+*/
 import th.ac.kmutt.chart.domain.ChartFilterInstanceEntity;
 import th.ac.kmutt.chart.domain.ChartInstanceEntity;
 import th.ac.kmutt.chart.domain.CommentEntity;
 import th.ac.kmutt.chart.domain.DatasourceConnectionEntity;
-import th.ac.kmutt.chart.domain.FeatureEntity;
+//import th.ac.kmutt.chart.domain.FeatureEntity;
 import th.ac.kmutt.chart.domain.FilterEntity;
 import th.ac.kmutt.chart.domain.FilterInstanceEntity;
 import th.ac.kmutt.chart.domain.FilterInstanceEntityPK;
@@ -208,6 +210,7 @@ public class ChartRepository {
     }
 
     //CHART_FEATURE
+    /*
     public Integer saveChartFeatureEntity(ChartFeatureEntity transientInstance) throws DataAccessException{
         entityManager.persist(transientInstance);
         return transientInstance.getChartId();
@@ -269,7 +272,7 @@ public class ChartRepository {
     public ChartFeatureMappingEntity findChartFeatureMappingEntityById(ChartFeatureMappingEntityPK id) throws DataAccessException{
         return entityManager.find(ChartFeatureMappingEntity.class, id);
     }
-
+   */
     //CHART_FILTER_INSTANCE
     public Integer saveChartFilterInstanceEntity(ChartFilterInstanceEntity transientInstance) throws DataAccessException {
         entityManager.persist(transientInstance);
@@ -371,6 +374,7 @@ public class ChartRepository {
     }
 
     //FEATURE
+    /*
     public Integer saveFeatureEntity(FeatureEntity transientInstance) throws DataAccessException {
         entityManager.persist(transientInstance);
         return transientInstance.getFeatureId();
@@ -390,7 +394,7 @@ public class ChartRepository {
     public FeatureEntity findFeatureEntityById(Integer featureId) throws DataAccessException{
         return entityManager.find(FeatureEntity.class, featureId);
     }
-
+	*/
     //FILTER
     public Integer saveFilterEntity(FilterEntity transientInstance) throws DataAccessException {
     	entityManager.persist(transientInstance);
@@ -1124,7 +1128,9 @@ public class ChartRepository {
 			List<UserM>  userList = new ArrayList<UserM>();
 			String fname = getConstant("authen");
 			Query query = entityManager.createNativeQuery(" select * from FILTER where filter_name = '"+fname+"'",FilterEntity.class);
-			FilterEntity datasource = (FilterEntity) query.getResultList().get(0);
+			List result = query.getResultList();
+			if(result!=null && result.size()>0){
+				FilterEntity datasource = (FilterEntity) query.getResultList().get(0);
 				
 				query = portalEntityManager.createNativeQuery(datasource.getSqlQuery());
 				List<Object[]> results = query.getResultList();
@@ -1133,8 +1139,9 @@ public class ChartRepository {
 					user.setUserId(String.valueOf(row[0]));
 					user.setUsername(String.valueOf(row[1]));
 					userList.add(user);
-				}		
-				return userList;
+				}
+			}
+			return userList;
 		}catch(Exception e){
 				logger.error(" user retrive fail reason "+e);
 				return new ArrayList<UserM>();

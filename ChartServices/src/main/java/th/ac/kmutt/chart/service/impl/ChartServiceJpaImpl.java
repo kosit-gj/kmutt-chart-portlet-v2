@@ -73,7 +73,7 @@ public class ChartServiceJpaImpl implements ChartService {
     public List listChartEntity(ChartM param) throws DataAccessException {
         return chartRepository.listChartEntity(param);
     }
-
+    /*
     public Integer saveChartFeatureEntity(ChartFeatureEntity transientInstance) throws DataAccessException {
         return chartRepository.saveChartFeatureEntity(transientInstance);
     }
@@ -121,7 +121,7 @@ public class ChartServiceJpaImpl implements ChartService {
     public ChartFeatureMappingEntity findChartFeatureMappingEntityById(ChartFeatureMappingEntityPK id) throws DataAccessException {
         return chartRepository.findChartFeatureMappingEntityById(id);
     }
-
+    */
     public Integer saveChartFilterInstanceEntity(ChartFilterInstanceEntity transientInstance) throws DataAccessException {
         return chartRepository.saveChartFilterInstanceEntity(transientInstance);
     }
@@ -174,7 +174,7 @@ public class ChartServiceJpaImpl implements ChartService {
     public CommentEntity findCommentEntityById(String instanceId) throws DataAccessException {
         return chartRepository.findCommentEntityById(instanceId);
     }
-
+    /*
     public Integer saveFeatureEntity(FeatureEntity transientInstance) throws DataAccessException {
         return chartRepository.saveFeatureEntity(transientInstance);
     }
@@ -190,7 +190,7 @@ public class ChartServiceJpaImpl implements ChartService {
     public FeatureEntity findFeatureEntityById(Integer featureId) throws DataAccessException {
         return chartRepository.findFeatureEntityById(featureId);
     }
-    
+    */
     // filter section
     @Override
     public void saveFilter(FilterM filterModel) throws Exception {
@@ -750,8 +750,10 @@ public class ChartServiceJpaImpl implements ChartService {
     public List<FilterInstanceM> getFilterInstanceWithItem(String instanceId){
     	//** filterInstaance  ins 1 with n filter
     	List<FilterInstanceM> fins = new ArrayList<FilterInstanceM>();
+    	logger.info("instanceId="+instanceId);
      	List<Object[]> resultSet = chartRepository.fetchFilterInstanceWithItem(instanceId); 	
-		FilterInstanceM fin = new FilterInstanceM();
+     	logger.info("resultSet="+resultSet);
+     	FilterInstanceM fin = new FilterInstanceM();
 		fin.setInstanceId(instanceId);
 		List<FilterM> filters = new ArrayList<FilterM>();
      	for( Object[] result :  resultSet){

@@ -193,6 +193,7 @@ public class ChartInstanceResource  extends BaseResource {
             if (domain.getChartByChartId() != null) {
                 ChartM chartM = new ChartM();
                 BeanUtils.copyProperties(domain.getChartByChartId(), chartM);
+                /*
                 if (domain.getChartByChartId().getChartFeatureByChartId() != null) {
                     ChartFeatureM chartFeatureM = new ChartFeatureM();
                     BeanUtils.copyProperties(domain.getChartByChartId().getChartFeatureByChartId(), chartFeatureM);
@@ -200,6 +201,7 @@ public class ChartInstanceResource  extends BaseResource {
                     chartM.setChartFeature(chartFeatureM);
                     chartM.setPaging(null);
                 }
+                */
                 model.setChart(chartM);
             }
             // set ServiceM

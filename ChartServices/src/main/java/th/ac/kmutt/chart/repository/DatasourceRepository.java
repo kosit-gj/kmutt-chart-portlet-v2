@@ -58,6 +58,8 @@ public class DatasourceRepository {
     		EntityManager em = SystemSetting.getConnects(dsid.toString());
     		 */
     		/* */
+   		DatasourceConnectionEntity datasource = entityManager.find(DatasourceConnectionEntity.class, dsid);
+   		
    		EntityManager em = SystemSetting.getConnects(dsid.toString());
    		logger.info("EntityManager ["+em+"]");	
    		   if(em==null){
@@ -67,7 +69,9 @@ public class DatasourceRepository {
     			em = SystemSetting.getConnects(dsid.toString());
     		}
    		   // validate query 
-   		   if(dsid==2){
+   		   //if(dsid==2){
+   			if(datasource!=null && datasource.getConnType()!=null 
+   					&& datasource.getConnType().equalsIgnoreCase("DB2")){
    		   //if(false){
    			logger.info(" into validate Query connection. . .");
    			Query query = em.createNativeQuery("SELECT 1 FROM sysibm.sysdummy1 ");

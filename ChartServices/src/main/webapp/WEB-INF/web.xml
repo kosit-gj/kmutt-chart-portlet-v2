@@ -4,11 +4,13 @@ xmlns="http://java.sun.com/xml/ns/javaee"
 xmlns:web="http://java.sun.com/xml/ns/javaee"  
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>Services</display-name>
+  <!--  
   <servlet>
     <servlet-name>LoaderConns</servlet-name>
     <servlet-class>th.ac.kmutt.chart.rest.application.Loader</servlet-class>
     <load-on-startup>1</load-on-startup>
 </servlet>
+  -->
   <servlet>
     <servlet-name>RestletServlet</servlet-name>
     <servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
@@ -22,8 +24,10 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
     <servlet-name>RestletServlet</servlet-name>
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
+   <!--  
   <servlet-mapping>
     <servlet-name>LoaderConns</servlet-name>
     <url-pattern>/rest/init</url-pattern>
   </servlet-mapping>
+  -->
 </web-app>

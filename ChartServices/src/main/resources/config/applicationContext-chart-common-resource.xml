@@ -12,6 +12,7 @@
 		  class="th.ac.kmutt.chart.rest.resource.ChartResource"
 		  scope="prototype">
 	</bean>
+	<!--  
 	<bean id="chartfeatureResource"
 		  class="th.ac.kmutt.chart.rest.resource.ChartFeatureResource"
 		  scope="prototype">
@@ -24,6 +25,7 @@
 		  class="th.ac.kmutt.chart.rest.resource.ChartFeatureMappingResource"
 		  scope="prototype">
 	</bean>
+	-->
 	<bean id="chartfilterinstanceResource"
 		  class="th.ac.kmutt.chart.rest.resource.ChartFilterInstanceResource"
 		  scope="prototype">
@@ -36,10 +38,12 @@
 		  class="th.ac.kmutt.chart.rest.resource.CommentResource"
 		  scope="prototype">
 	</bean>
+	<!--  
 	<bean id="featureResource"
 		  class="th.ac.kmutt.chart.rest.resource.FeatureResource"
 		  scope="prototype">
 	</bean>
+	-->
 	<bean id="filterResource"
 		  class="th.ac.kmutt.chart.rest.resource.FilterResource"
 		  scope="prototype">
