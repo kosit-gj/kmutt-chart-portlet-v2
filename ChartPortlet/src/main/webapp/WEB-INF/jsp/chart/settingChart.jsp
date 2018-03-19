@@ -16,6 +16,7 @@
 <portlet:resourceURL var="loadChartProp" id="loadChartProp" ></portlet:resourceURL>
 <portlet:resourceURL var="regetDatasource" id="regetDatasource" ></portlet:resourceURL>
 <portlet:resourceURL var="loadServiceFilter" id="loadServiceFilter" ></portlet:resourceURL>
+<portlet:resourceURL var="adHocChartAjax" id="adHocChartAjax"></portlet:resourceURL>
 <head>
     <title></title>
     
@@ -259,13 +260,27 @@
 	}
     function ${ns}findChartById(type){ // deprecate
         var chartType=$('#${ns}chartType').val();
-        //alert(chartType)
+        console.log(chartType)
         var chartM={
             chartType:chartType
         }
-
+        $.ajax({
+   	 		dataType: "json",
+   	 		url:"<%=adHocChartAjax%>",
+   	 		data: { chartType : chartType },
+   	 		success:function(data){
+   	 			console.log(data)
+   	 			if (data != null) {
+                	if(type=='1')
+                    	$("#${ns}dataAdhoc").val(data["dataAdhoc"]);
+            	}
+   	 		}
+   	 	});
+        <%-- 
          ChartAjax.listChart(chartM, {
             callback: function (data) {
+            	console.log(type)
+            	console.log(data)
             //  data = data.resultListObj;
                 if (data != null && data.length>0) {
                     if(type=='1')
@@ -273,6 +288,7 @@
                 }
             }
          });
+         --%>
     }
     function ${ns}listServiceFilterMapping(){ // deprecate
         var serviceId=$('#${ns}dataSource').val();

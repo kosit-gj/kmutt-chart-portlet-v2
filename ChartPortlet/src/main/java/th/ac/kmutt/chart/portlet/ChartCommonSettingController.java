@@ -13,6 +13,8 @@ import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -341,4 +343,29 @@ public class ChartCommonSettingController {
 		json.put("header",header);
 		response.getWriter().write(json.toString());
     }
+    @ResourceMapping(value = "adHocChartAjax")
+	@ResponseBody
+	public void adHocChartAjax(ResourceRequest request, ResourceResponse response) throws IOException {
+		// request.getParameterMap();
+		com.liferay.portal.kernel.json.JSONObject json = JSONFactoryUtil.createJSONObject();
+
+		//com.liferay.portal.kernel.json.JSONObject header = JSONFactoryUtil.createJSONObject();
+		//com.liferay.portal.kernel.json.JSONObject content = JSONFactoryUtil.createJSONObject();
+
+		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
+		HttpServletRequest normalRequest = PortalUtil.getOriginalServletRequest(httpReq);
+		String chartType = normalRequest.getParameter("chartType");
+		
+		ChartM chartM = new ChartM();
+		chartM.setChartType(chartType);
+		List list = chartService.listChart(chartM);
+		String dataAdhoc = "";
+		if(list!=null && list.size()>0){
+			ChartM result = (ChartM)list.get(0);
+			dataAdhoc = result.getDataJson();
+		}
+		//json.put("content", content);
+		json.put("dataAdhoc", dataAdhoc);
+		response.getWriter().write(json.toString());
+	}
 }
