@@ -1,8 +1,15 @@
 package th.ac.kmutt.chart.portlet;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.model.Role;
+import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.service.RoleLocalServiceUtil;
+import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 
 import org.apache.log4j.Logger;
@@ -24,6 +31,7 @@ import th.ac.kmutt.chart.form.ChartDatasourceForm;
 import th.ac.kmutt.chart.model.ChartM;
 import th.ac.kmutt.chart.model.ConnectionM;
 import th.ac.kmutt.chart.model.FilterM;
+import th.ac.kmutt.chart.model.RoleM;
 import th.ac.kmutt.chart.model.ServiceM;
 import th.ac.kmutt.chart.model.UserM;
 import th.ac.kmutt.chart.service.ChartService;
@@ -108,7 +116,17 @@ public class ChartDatasourceController {
 			userList = new HashSet<UserM>(users);
 		}
 		dsf.setUserList(userList);
-
+		
+		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+		
+		try {
+			List<Role> roles = RoleLocalServiceUtil.getRoles(themeDisplay.getCompanyId());
+			dsf.setRoleList(roles);
+		} catch (SystemException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		/*
 		 * x user List<String> users = chartService.listFilter(f); Set<String>
 		 * usersInit = new HashSet<String>(); dsf.setUserInitialList(usersInit);
@@ -170,7 +188,8 @@ public class ChartDatasourceController {
 		String[] useUsed = request.getParameterValues("userUsedList") != null ? request.getParameterValues("userUsedList") : new String[0];
 		List<String> useUsedId = selectedFilter.length > 0 ? Arrays.asList(useUsed) : new ArrayList<String>();
 
-		
+		String[] roleUsed = request.getParameterValues("roleUsedList") != null ? request.getParameterValues("roleUsedList") : new String[0];
+		List<String> roleUsedId = roleUsed.length > 0 ? Arrays.asList(roleUsed) : new ArrayList<String>();
 				
 		try {
 			ServiceM s = new ServiceM();
@@ -202,6 +221,14 @@ public class ChartDatasourceController {
 				userList.add(user);
 			}
 			s.setUserList(userList);
+			
+			List<RoleM> roleList = new ArrayList<RoleM>();
+			for (String roleId : roleUsedId) {
+				RoleM role = new RoleM();
+				role.setRoleId(Long.valueOf(roleId));
+				roleList.add(role);
+			}
+			s.setRoleList(roleList);
 			
 			Integer resultCode = chartService.saveChartDatasource(s);
 			if (resultCode > 0) {
@@ -237,6 +264,9 @@ public class ChartDatasourceController {
 
 		String[] useUsed = request.getParameterValues("userUsedList") != null ? request.getParameterValues("userUsedList") : new String[0];
 		List<String> useUsedId = useUsed.length > 0 ? Arrays.asList(useUsed) : new ArrayList<String>();
+		
+		String[] roleUsed = request.getParameterValues("roleUsedList") != null ? request.getParameterValues("roleUsedList") : new String[0];
+		List<String> roleUsedId = roleUsed.length > 0 ? Arrays.asList(roleUsed) : new ArrayList<String>();
 
 		//set form
 		Set<FilterM> usedFilterSet = new HashSet<FilterM>();
@@ -277,6 +307,14 @@ public class ChartDatasourceController {
 				userList.add(user);
 			}
 			s.setUserList(userList);
+			
+			List<RoleM> roleList = new ArrayList<RoleM>();
+			for (String roleId : roleUsedId) {
+				RoleM role = new RoleM();
+				role.setRoleId(Long.valueOf(roleId));
+				roleList.add(role);
+			}
+			s.setRoleList(roleList);
 			
 			
 			Integer resultCode = chartService.saveChartDatasource(s);
@@ -337,6 +375,7 @@ public class ChartDatasourceController {
 		JSONObject filterObj = JSONFactoryUtil.createJSONObject();
 		JSONObject chartObj = JSONFactoryUtil.createJSONObject();
 		JSONObject userObj = JSONFactoryUtil.createJSONObject();
+		JSONObject roleObj = JSONFactoryUtil.createJSONObject();
 
 		HttpServletRequest httpReq = PortalUtil.getHttpServletRequest(request);
 		HttpServletRequest normalRequest = PortalUtil
@@ -391,8 +430,22 @@ public class ChartDatasourceController {
 					fu.put(useChartJson);
 				}
 			}
+			
+			// user
+			JSONArray roleJsonArray = JSONFactoryUtil.createJSONArray();
+			if (s.getUserList() != null) {
+				for (RoleM roleUsed : s.getRoleList()) {
+					JSONObject roleJsonObj = JSONFactoryUtil.createJSONObject();
+					roleJsonObj.put("roleId", roleUsed.getRoleId());
+					roleJsonObj.put("roleName", roleUsed.getName());
+					roleJsonArray.put(roleJsonObj);
+				}
+			}
+						
 			userObj.put("userUsedlist", fu);
+			roleObj.put("roleUsedlist", roleJsonArray);
 			content.put("user", userObj);
+			content.put("role", roleObj);
 
 			head.put("success", "1");
 			head.put("msg", "success");

@@ -185,6 +185,7 @@
 
 <script type="text/javascript" src="<c:url value="/resources/js/jquery-1.11.2.min.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/resources/fusioncharts/js/fusioncharts.js" />"></script>
+<script type="text/javascript" src="<c:url value="/resources/fusioncharts/js/fusioncharts.widgets.js" />"></script>
 <script type="text/javascript" src="<c:url value="/resources/fusioncharts/js/themes/fusioncharts.theme.fint.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/resources/js/wtpTable.js"/>"></script>
 <script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js"/>"></script>

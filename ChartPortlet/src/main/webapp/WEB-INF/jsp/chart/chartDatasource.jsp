@@ -64,6 +64,7 @@
 	#web_${ns} .chart_ds_name select{ }
 	#web_${ns} .chart_ds_param select{ height:250px;width:457px;overflow-x:scroll}
 	#web_${ns} .userAuthority select{ height:250px;width:457px;overflow-x:scroll}
+	#web_${ns} .roleAuthority select{ height:250px;width:457px;overflow-x:scroll}
 	#web_${ns} .chart_param select{ height:250px;width:457px;overflow-x:scroll}
 	.selection_div>div{ display:inline-block;}
 	.errorMessage{ color:red;}
@@ -344,6 +345,38 @@ var checkValidateFormFn = function(actionName){
 			opt.prop("selected",true);
 		}//end for
 	}
+	// for role selection
+	function selectedRole(current){
+		//var selectedElement=$("#web_${ns} .chart_param .chart_param_avaliable select option:selected");
+		var selectedElement=$("#web_${ns} select#roleInitList option:selected");
+		var selected = [];
+		selectedElement.each(function(){
+			 selected.push(  [$(this).val(),$(this).html()]  );
+			 $(this).hide();
+			 $(this).prop("selected",false);
+		});
+		var renderSelectedElement=$("#web_${ns} select#roleUsedList");
+		for(var i=0;i<selected.length;i++){
+			var newOpt = $("<option/>");
+			newOpt.html( selected[i][1] );
+			newOpt.attr("value",selected[i][0]);
+			renderSelectedElement.append(newOpt);
+		}//end for
+	}
+	function deselectedRole(current){
+		var selectedElement=$("#web_${ns} select#roleUsedList option:selected");
+		var selected = [];
+		selectedElement.each(function(){
+			 selected.push(  [$(this).val(),$(this).html()]  );
+		     $(this).remove();
+		});
+		for(var i=0;i<selected.length;i++){
+			var inx = selected[i][0];
+			var opt = $("#web_${ns} select#roleInitList option[value='"+inx+"']");
+			opt.show();
+			opt.prop("selected",true);
+		}//end for
+	}
 	//page function
 	function formSubmit(actionName){
 
@@ -428,6 +461,10 @@ var checkValidateFormFn = function(actionName){
 			$("#web_${ns} select#userUsedList option").each(function(){
 				$(this).prop("selected",true);
 			});
+			//role
+			$("#web_${ns} select#roleUsedList option").each(function(){
+				$(this).prop("selected",true);
+			});
 			// do submit case
 			$("#web_${ns} form#chartDatasource").submit();
 		}else{
@@ -469,6 +506,7 @@ var checkValidateFormFn = function(actionName){
    	 				renderFilter(data["content"]["filter"]);
    	 				renderChart(data["content"]["chart"]);
    	 				renderUser(data["content"]["user"]);
+   	 				renderRole(data["content"]["role"]);
    	 		},error:function(data){
 				$("#web_${ns} #sqlMessage").html("Datasource detail error");
    	 		} 
@@ -537,6 +575,25 @@ var checkValidateFormFn = function(actionName){
 			target.hide();
 		}
 	}
+	function renderRole(obj){
+		$("#web_${ns} select#roleInitList option").each(function(){
+			$(this).prop("selected",false);
+			$(this).show();
+		});
+		$("#web_${ns} select#roleUsedList").empty();
+		
+		for(var i=0;i<obj["roleUsedlist"].length;i++){
+			var opt =  $("<option />");
+			var value = obj["roleUsedlist"][i]["roleId"];
+			opt.attr("value",value);
+			opt.html(obj["roleUsedlist"][i]["roleName"]);
+			$("#web_${ns} select#roleUsedList").append(opt);
+			//disable
+			var target = $("#web_${ns} select#roleInitList").find("option[value='"+value+"']");
+			target.prop("selected",false);
+			target.hide();
+		}
+	}
 	var getObjectDatasourceListFn = function(){
 		
 	   
@@ -563,6 +620,7 @@ var checkValidateFormFn = function(actionName){
 			$("#web_${ns} select#filterUsedList").empty();
 	    	$("#web_${ns} select#chartUsedList").empty();
 	    	$("#web_${ns} select#userUsedList").empty();
+	    	$("#web_${ns} select#roleUsedList").empty();
 	    	
 	    	$("#web_${ns} input#datasourceName").val("");
 	    	$("#web_${ns} #selectedConnI option:first").attr('selected','selected');
@@ -895,6 +953,23 @@ var checkValidateFormFn = function(actionName){
 									<div class="user_used">
 										<form:select id="userUsedList" path="userUsedList" multiple="true">
 											<form:options items="${chartDatasourceForm.userUsedList}" itemValue="userId" itemLabel="username"/>
+										</form:select>
+									</div>
+								</div>
+								<br style='clear:both'>
+								<span class='labelChartDataSource'>Role Authority</span>
+								<div class="roleAuthority selection_div inputFormChartDataSource">
+									<div class="role_avaliable">
+										<form:select id="roleInitList" path="roleInitList" items="${chartDatasourceForm.roleList}" itemValue="roleId" itemLabel="name" multiple="true"/>
+									</div>
+									<div class="user_control">
+										<input type="button" onclick="selectedRole(this)" value=">>"/>
+										<br/>
+										<input type="button" onclick="deselectedRole(this)" value="<<"/>
+									</div>
+									<div class="user_used">
+										<form:select id="roleUsedList" path="roleUsedList" multiple="true">
+											<form:options items="${chartDatasourceForm.roleUsedList}" itemValue="roleId" itemLabel="name"/>
 										</form:select>
 									</div>
 								</div>

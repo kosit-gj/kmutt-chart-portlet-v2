@@ -99,6 +99,7 @@ public class ConnectionController {
         conn.setDialect(request.getParameter("model.dialect") );
         conn.setUsername(request.getParameter("model.username") );
         conn.setPassword(request.getParameter("model.password") );
+        conn.setConnType(request.getParameter("model.connType") );
         
     	if( DefaultConstant.modeNewData.equalsIgnoreCase(  mode ) ){
     		try{
@@ -153,6 +154,7 @@ public class ConnectionController {
   		content.put("dialect", model.getDialect());
   		content.put("username", model.getUsername());
   		content.put("password",model.getPassword());
+  		content.put("connType",model.getConnType());
   		
   		head.put("success","1");
       	json.put("content", content);

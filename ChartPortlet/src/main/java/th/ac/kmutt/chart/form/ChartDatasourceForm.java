@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
+import com.liferay.portal.model.Role;
+
 import th.ac.kmutt.chart.model.ChartM;
 import th.ac.kmutt.chart.model.ConnectionM;
 import th.ac.kmutt.chart.model.FilterM;
@@ -29,6 +31,10 @@ public class ChartDatasourceForm extends CommonForm implements Serializable {
     private Set<UserM> userList;
     private Set<UserM> userUsedList;
 	private Set<UserM> userInitList;
+	
+	private List<Role> roleList;
+	private List<Role> roleUsedList;
+	private List<Role> roleInitList;
 	
 	private Set<ConnectionM> connections;
 	private Integer selectedConnId;
@@ -131,5 +137,24 @@ public class ChartDatasourceForm extends CommonForm implements Serializable {
 	public void setSelectedConnId(Integer selectedConnId) {
 		this.selectedConnId = selectedConnId;
 	}
+	public List<Role> getRoleList() {
+		return roleList;
+	}
+	public void setRoleList(List<Role> roleList) {
+		this.roleList = roleList;
+	}
+	public List<Role> getRoleUsedList() {
+		return roleUsedList;
+	}
+	public void setRoleUsedList(List<Role> roleUsedList) {
+		this.roleUsedList = roleUsedList;
+	}
+	public List<Role> getRoleInitList() {
+		return roleInitList;
+	}
+	public void setRoleInitList(List<Role> roleInitList) {
+		this.roleInitList = roleInitList;
+	}
+	
 	
 }

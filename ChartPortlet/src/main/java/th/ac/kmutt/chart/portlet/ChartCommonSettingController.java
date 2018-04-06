@@ -8,7 +8,9 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.model.Role;
 import com.liferay.portal.model.User;
+import com.liferay.portal.service.RoleLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 
@@ -98,11 +100,33 @@ public class ChartCommonSettingController {
         PortletSession portletSession = request.getPortletSession();
         portletSession.setAttribute("userId", userId, PortletSession.APPLICATION_SCOPE);
 
-        List<ServiceM> listServices = null;
+        List<ServiceM> listServices = new ArrayList<ServiceM>();
         ServiceM  serviceM=new ServiceM();
         serviceM.setType("chart");
         
         String instanceId=themeDisplay.getPortletDisplay().getInstanceId(); 
+        List<Role> myRoles;
+        List<RoleM> roleList = new ArrayList<RoleM>();
+		try {
+			myRoles = RoleLocalServiceUtil.getUserRoles(themeDisplay.getUserId());
+			if(myRoles!=null){
+				for(Role role : myRoles){
+					RoleM roleM =new RoleM();
+					roleM.setRoleId(role.getRoleId());
+					roleM.setName(role.getName());
+					roleList.add(roleM);
+				}
+			}
+		} catch (SystemException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		serviceM.setRoleList(roleList);
+	
+		 ChartM chartM=new ChartM();
+	     chartM.setActiveFlag("1");
+	     List<ChartM> chartList= chartService.listChart(chartM);
+	        
         ChartInstanceM chartInstanceM=chartService.findChartInstanceById(instanceId);
         List<ChartFilterInstanceM>  chartFilterInstance = new ArrayList<ChartFilterInstanceM>();
         if(chartInstanceM!=null ){
@@ -133,15 +157,18 @@ public class ChartCommonSettingController {
             serviceM.setUserId(userId);
            listServices=  chartService.listServiceByChart(serviceM);
         }else{
-
-    		listServices=  chartService.listService(serviceM);
+        	if(chartList!=null && chartList.size()>0){
+        		ChartM chart = chartList.get(0);
+        		 serviceM.setChartType(chart.getChartType());
+                 serviceM.setUserId(userId);
+        		listServices=  chartService.listServiceByChart(serviceM);
+        	}
+    		//listServices=  chartService.listService(serviceM);
         }
         model.addAttribute("chartFilterInstance",chartFilterInstance);
         model.addAttribute("chartSettingForm", chartSettingForm);
         model.addAttribute("serviceList",listServices);      
-        ChartM chartM=new ChartM();
-        chartM.setActiveFlag("1");
-        List<ChartM> chartList= chartService.listChart(chartM);
+       
         model.addAttribute("chartList", chartList);
         
         //model.addAttribute("serviceFilterMappingMList",serviceFilterMappingMList);

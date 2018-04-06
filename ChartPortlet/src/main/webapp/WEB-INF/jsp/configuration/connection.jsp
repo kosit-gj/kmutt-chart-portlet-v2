@@ -212,6 +212,7 @@ $( document ).ajaxStop(function() {
 		$("#web_${ns} #dialect").val(data["dialect"]);
 		$("#web_${ns} #username").val(data["username"]);
 		$("#web_${ns} #password").val(data["password"]);
+		$("#web_${ns} #connType").val(data["connType"]);
 		
 	}
 	
@@ -225,6 +226,7 @@ $( document ).ajaxStop(function() {
 		$("#web_${ns} #dialect").val("");
 		$("#web_${ns} #username").val("");
 		$("#web_${ns} #password").val("");
+		$("#web_${ns} #connType").val("");
 		$("#web_${ns} #submitMessage").html("");
 		
     	$("#web_${ns} #actionTitle").html("<b>Add</b>");
@@ -381,6 +383,7 @@ $( document ).ajaxStop(function() {
 							<label class='labelConnection'><font color="red" style='font-size:16px; font-weight:bold;'>*</font> Hibernate Dialect</label><form:input id="dialect" type="text" class="detail inputFormConnection" path="model.dialect" style="width:320px;" /><br/>
 							<label class='labelConnection'><font color="red" style='font-size:16px; font-weight:bold;'>*</font> User</label><form:input id="username" type="text" class="detail inputFormConnection" path="model.username" style="width:320px;" /><br/>
 							<label class='labelConnection'><font color="red" style='font-size:16px; font-weight:bold;'>*</font> Password</label><form:input id="password" type="password" class="detail inputFormConnection" path="model.password" style="width:320px;"/><br/>
+							<label class='labelConnection'><font color="red" style='font-size:16px; font-weight:bold;'>*</font> Type</label><form:input id="connType" type="text" class="detail inputFormConnection" path="model.connType" style="width:320px;" /><br/>
 							<p id="submitMessage"></p>
 							<br style='clear:both'/>
 							<!-- 
