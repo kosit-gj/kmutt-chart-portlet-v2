@@ -31,6 +31,7 @@ import th.ac.kmutt.chart.model.FilterInstanceM;
 import th.ac.kmutt.chart.model.FilterM;
 import th.ac.kmutt.chart.model.FusionChartM;
 import th.ac.kmutt.chart.model.InBoundOutBoundServiceM;
+import th.ac.kmutt.chart.model.RoleM;
 import th.ac.kmutt.chart.model.ServiceM;
 import th.ac.kmutt.chart.model.UserM;
 
@@ -173,5 +174,7 @@ public interface ChartService {
 	public List<UserM> listUser() throws Exception;
 	public List<UserM> findUserByServiceId(Integer serviceId) throws Exception;
 
+	//role
+	public List<RoleM> findRoleByServiceId(Integer serviceId) throws Exception;
 	
 }

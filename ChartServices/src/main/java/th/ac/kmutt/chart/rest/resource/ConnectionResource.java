@@ -143,6 +143,7 @@ public class ConnectionResource  extends BaseResource {
     private ConnectionM packModel(DatasourceConnectionEntity ent){
     	ConnectionM model = new ConnectionM();
     	BeanUtils.copyProperties(ent,model);
+    	
     	return model;
     }
     private List<ConnectionM> transform(List<DatasourceConnectionEntity> enList){

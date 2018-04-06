@@ -44,6 +44,7 @@ import th.ac.kmutt.chart.domain.ServiceChartMappingEntityPK;
 import th.ac.kmutt.chart.domain.ServiceEntity;
 import th.ac.kmutt.chart.domain.ServiceFilterMappingEntity;
 import th.ac.kmutt.chart.domain.ServiceFilterMappingEntityPK;
+import th.ac.kmutt.chart.domain.ServiceRoleMappingEntity;
 import th.ac.kmutt.chart.domain.ServiceUserMappingEntity;
 import th.ac.kmutt.chart.model.ChartFilterInstanceM;
 import th.ac.kmutt.chart.model.ConnectionM;
@@ -51,6 +52,7 @@ import th.ac.kmutt.chart.model.FilterInstanceM;
 import th.ac.kmutt.chart.model.FilterM;
 import th.ac.kmutt.chart.model.FilterParamM;
 import th.ac.kmutt.chart.model.FilterValueM;
+import th.ac.kmutt.chart.model.RoleM;
 import th.ac.kmutt.chart.model.ServiceM;
 import th.ac.kmutt.chart.model.UserM;
 
@@ -111,12 +113,37 @@ public class ChartRepository {
     }
     public List listServiceByChartId(ServiceM sm) throws DataAccessException{
     	StringBuffer sb = new StringBuffer();
+    	/*
     	sb.append("select s.*  from SERVICE_CHART_MAPPING sm , SERVICE s  , CHART c , SERVICE_USER_MAPPING su  "
     			+ " where s.service_id = sm.service_id and sm.chart_id = c.chart_id and su.SERVICE_ID = s.SERVICE_ID "
     			+ " and c.chart_type = :chartType and su.user_id = :username ");
+    	*/
+    	//c.CHART_TYPE = 'bar2d'  and (su.USER_ID ='joebloggs' or srole.ROLE_ID in (20161,20165) )
+    	sb.append("select s.*  from SERVICE_CHART_MAPPING sm "
+    			+ " LEFT JOIN SERVICE s on (sm.SERVICE_ID = s.SERVICE_ID )  "
+    			+" LEFT JOIN CHART c on (sm.CHART_ID = c.CHART_ID ) "
+    			+" LEFT JOIN SERVICE_USER_MAPPING su on (su.SERVICE_ID = s.SERVICE_ID) "
+    			+" LEFT JOIN SERVICE_ROLE_MAPPING srole on (srole.SERVICE_ID = s.SERVICE_ID) "
+    			+ " where c.chart_type = :chartType and ( su.user_id = :username ");
+    	List<RoleM> roles = sm.getRoleList();
+    	boolean haveRole =false;
+    	int[] roleArray = null;
+    	if(roles!=null && roles.size()>0){
+    		int size = roles.size();
+    		roleArray = new int[size];
+    		int index=0;
+    		for( RoleM role : roles){
+    			roleArray[index++]=role.getRoleId().intValue();
+    		}
+    		sb.append(" or srole.ROLE_ID in (:roles) ");	
+    		haveRole = true;
+    	}
+    	sb.append(" ) GROUP BY s.SERVICE_ID ");
     	Query query = entityManager.createNativeQuery(sb.toString(),ServiceEntity.class);
     	query.setParameter("chartType",sm.getChartType());   
     	query.setParameter("username",sm.getUserId() );
+    	if (haveRole)
+    		query.setParameter("roles",roleArray );
     	return query.getResultList();
     }
     public List listFilterEntity(th.ac.kmutt.chart.model.FilterM param)throws DataAccessException{
@@ -549,6 +576,14 @@ public class ChartRepository {
     public Integer deleteServiceUserByService(Integer serviceId){
     	StringBuffer sb = new StringBuffer();
     	sb.append("delete from SERVICE_USER_MAPPING where service_id = :serviceId ");
+    	 Query query  = entityManager.createNativeQuery(sb.toString());
+    	 query.setParameter("serviceId", serviceId);
+    	Integer deletedCount =  query.executeUpdate();
+    	return deletedCount;
+    }
+    public Integer deleteServiceRoleByService(Integer serviceId){
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("delete from SERVICE_ROLE_MAPPING where service_id = :serviceId ");
     	 Query query  = entityManager.createNativeQuery(sb.toString());
     	 query.setParameter("serviceId", serviceId);
     	Integer deletedCount =  query.executeUpdate();
@@ -1165,6 +1200,35 @@ public class ChartRepository {
 		}
 		return returnUser;
 	}
+	private Map<Long,RoleM> listPortalRoles(){
+		Map<Long,RoleM>  roleMap = new HashMap<Long,RoleM>();
+		Query query = portalEntityManager.createNativeQuery(" SELECT roleId,name from Role_ ");
+		List<Object[]> results = query.getResultList();
+		for(Object[] row : results ){
+			RoleM role = new RoleM();
+			java.math.BigInteger roleId = (java.math.BigInteger)row[0];
+			role.setRoleId(roleId.longValue());
+			role.setName((String)row[1]);
+			roleMap.put(role.getRoleId(), role);
+		}
+		return roleMap;
+	}
+	public List<RoleM> findRoleByService(Integer serviceId) throws Exception{
+		List<RoleM>  returnRole = new ArrayList<RoleM>();
+		Map<Long,RoleM>  roleMap = listPortalRoles();
+		Query query = entityManager.createNativeQuery("select SERVICE_ID,ROLE_ID from SERVICE_ROLE_MAPPING where service_id="+serviceId);
+		List<Object[]> results =  query.getResultList();
+		
+		for(Object[] row : results){
+			java.lang.Integer roleId = (java.lang.Integer)row[1];
+			Long key = roleId.longValue();
+			if(roleMap.containsKey(key)){
+				returnRole.add(roleMap.get(key));
+			}
+			
+		}
+		return returnRole;
+	}
 	
 	public Integer newConnection(DatasourceConnectionEntity e) {
 
@@ -1199,6 +1263,12 @@ public class ChartRepository {
         entityManager.persist(transientInstance);
         return transientInstance.getId().getUserId();
     }
+    //role
+    //SERVICE_ROLE_MAPPING
+      public Long saveServiceRoleMappingEntity(ServiceRoleMappingEntity transientInstance) throws DataAccessException{
+          entityManager.persist(transientInstance);
+          return transientInstance.getId().getRoleId();
+      }
     
     //constants
     public String getConstant(String name)  {

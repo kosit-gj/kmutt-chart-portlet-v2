@@ -155,7 +155,10 @@ public class ServiceResource  extends BaseResource {
 	                        	 ds.setChartList( chartService.findChartByServiceId(domain.getServiceId()) );
 	                        	 logger.debug("find  user of service");
 	                        	 ds.setUserList(  chartService.findUserByServiceId(domain.getServiceId()) );
+	                        	 
+	                        	 ds.setRoleList(  chartService.findRoleByServiceId(domain.getServiceId()) );
 	                        	 dss.add(ds);
+	                        	 
 	                        	 logger.info(" chart datasource detail success sid="+ds.getServiceId());
                         	}catch(Exception e){
                         		e.printStackTrace();

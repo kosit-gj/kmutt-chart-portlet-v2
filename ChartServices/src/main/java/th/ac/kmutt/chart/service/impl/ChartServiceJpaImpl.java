@@ -335,6 +335,15 @@ public class ChartServiceJpaImpl implements ChartService {
     			map.setId(pk);
     			 chartRepository.saveServiceUserMappingEntity(map);
     		}
+    		//role
+    		for(RoleM role : service.getRoleList()){
+    			ServiceRoleMappingEntityPK pk = new ServiceRoleMappingEntityPK();
+    			pk.setRoleId(role.getRoleId());
+    			pk.setServiceId(Long.valueOf(serviceId));
+    			ServiceRoleMappingEntity map = new ServiceRoleMappingEntity();
+    			map.setId(pk);
+    			 chartRepository.saveServiceRoleMappingEntity(map);
+    		}
     	}
 		return 1;
     }
@@ -376,6 +385,17 @@ public class ChartServiceJpaImpl implements ChartService {
 	    			ServiceUserMappingEntity map = new ServiceUserMappingEntity();
 	    			map.setId(pk);
 	    			 chartRepository.saveServiceUserMappingEntity(map);
+	    		}
+	    		
+	    		//role
+	    		chartRepository.deleteServiceRoleByService(serviceId);
+	    		for(RoleM role : service.getRoleList()){
+	    			ServiceRoleMappingEntityPK pk = new ServiceRoleMappingEntityPK();
+	    			pk.setRoleId(role.getRoleId());
+	    			pk.setServiceId(Long.valueOf(serviceId));
+	    			ServiceRoleMappingEntity map = new ServiceRoleMappingEntity();
+	    			map.setId(pk);
+	    			 chartRepository.saveServiceRoleMappingEntity(map);
 	    		}
 	    	}
 	    	return 1;
@@ -638,6 +658,20 @@ public class ChartServiceJpaImpl implements ChartService {
 		    		multiSeries2DDualYCombination.setData(results);
 		    		chartJson = multiSeries2DDualYCombination.build();
 		    	}
+		    	/*Multi-series 2D Single Y Combination Chart (Column + Line + Area)*/
+		    	else if(chartInsEnt.getChartType().toLowerCase().equals("mscombi2d")){
+		    		MultiSeries2DSingleYCombination multiSeries2DSingleYCombination = new MultiSeries2DSingleYCombination();
+		    		multiSeries2DSingleYCombination.setTemplate(chartInsEnt.getChartJson());
+		    		multiSeries2DSingleYCombination.setData(results);
+		    		chartJson = multiSeries2DSingleYCombination.build();
+		    	}
+		    	/*Multi-series 3D Single Y Combination Chart (Column + Line + Area)*/
+		    	else if(chartInsEnt.getChartType().toLowerCase().equals("mscombi3d")){
+		    		MultiSeries3DSingleYCombination multiSeries3DSingleYCombination = new MultiSeries3DSingleYCombination();
+		    		multiSeries3DSingleYCombination.setTemplate(chartInsEnt.getChartJson());
+		    		multiSeries3DSingleYCombination.setData(results);
+		    		chartJson = multiSeries3DSingleYCombination.build();
+		    	}
 		    	/*Stacked Area 2D*/
 		    	else if(chartInsEnt.getChartType().toLowerCase().equals("stackedarea2d")){
 		    		StackArea2D stackArea2D = new StackArea2D();
@@ -693,6 +727,23 @@ public class ChartServiceJpaImpl implements ChartService {
 		    		stackedColumn3DLineDuaY.setTemplate(chartInsEnt.getChartJson());
 		    		stackedColumn3DLineDuaY.setData(results);
 		    		chartJson = stackedColumn3DLineDuaY.build();
+		    	}else{
+		    		JSONObject chartJsonOther = new JSONObject(chartInsEnt.getChartJson()); // retriveJSONObject	
+		    		if(results!=null && results.size()>0){
+		    			try{
+		    				JSONArray dataJson = new  JSONArray();
+		    				for( Object[] resultRow : results){
+		    					JSONObject attr = new JSONObject();
+		    					attr.put("label", resultRow[0] );
+		    					attr.put("value",resultRow[1] );
+		    					dataJson.put(attr);
+		    				}
+		    				chartJsonOther.put("data", dataJson);
+		    			}catch(Exception ex){
+		    				ex.printStackTrace();
+		    			}
+		    		}
+		    		chartJson = chartJsonOther.toString();
 		    	}
 		    	
 		    	// set title
@@ -1024,6 +1075,10 @@ public class ChartServiceJpaImpl implements ChartService {
 	@Override
 	public List<UserM> findUserByServiceId(Integer serviceId) throws Exception {	
 		return chartRepository.findUserByService(serviceId);
+	}
+	@Override
+	public List<RoleM> findRoleByServiceId(Integer serviceId) throws Exception {	
+		return chartRepository.findRoleByService(serviceId);
 	}
 	@Override
 	public Integer newConnection(DatasourceConnectionEntity e) throws Exception {
