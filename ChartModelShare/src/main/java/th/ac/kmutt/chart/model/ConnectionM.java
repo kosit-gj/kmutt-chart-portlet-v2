@@ -21,6 +21,7 @@ public class ConnectionM extends ImakeXML implements Serializable {
     private String username;
     private String password;
     private String dialect;
+    private String connType;
     
 	public Integer getConnId() {
 		return connId;
@@ -71,4 +72,12 @@ public class ConnectionM extends ImakeXML implements Serializable {
 	public void setDialect(String dialect) {
 		this.dialect = dialect;
 	}
+	public String getConnType() {
+		return connType;
+	}
+	public void setConnType(String connType) {
+		this.connType = connType;
+	}
+	
+	
 }

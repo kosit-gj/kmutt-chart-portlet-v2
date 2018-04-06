@@ -29,6 +29,8 @@ public class ServiceM extends ImakeXML implements Serializable {
     private List<UserM> userList;
     private String userId;
     private Integer connId;
+    private List<RoleM> roleList;
+    
     
     public Integer getServiceId() {
         return serviceId;
@@ -136,5 +138,13 @@ public class ServiceM extends ImakeXML implements Serializable {
 
 	public void setConnId(Integer connId) {
 		this.connId = connId;
+	}
+
+	public List<RoleM> getRoleList() {
+		return roleList;
+	}
+
+	public void setRoleList(List<RoleM> roleList) {
+		this.roleList = roleList;
 	}
 }
